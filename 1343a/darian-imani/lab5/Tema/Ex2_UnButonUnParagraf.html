@@ -1,20 +1,27 @@
 
+
 <!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <title>Exercitiul 3 - Un buton si un paragraf</title>
+    <title>Exercitiul 3 - Buton si paragraf</title>
 </head>
 <body>
     <h1>Schimbarea culorilor la clic</h1>
 
-    <p id="p1">Acesta este un paragraf.</p>
+    <p id="paragraf" style="padding: 15px;">
+        Acesta este un paragraf.
+    </p>
 
-    <button onclick="document.getElementById('p1').style.backgroundColor = 'pink'; document.getElementById('p1').style.color = 'red';">
-        Schimba culorile
+    <button onclick="
+        document.getElementById('paragraf').style.backgroundColor='pink';
+        document.getElementById('paragraf').style.color='red';
+    ">
+        Schimbă culorile
     </button>
 
-    <p><a href="index.html">Înapoi la temă</a></p>
+    <p><a href="index.html">Înapoi la exerciții</a></p>
 </body>
 </html>
+
 

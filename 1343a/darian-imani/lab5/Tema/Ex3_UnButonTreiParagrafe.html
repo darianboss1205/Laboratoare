@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -9,33 +10,37 @@
         function modificaParagrafe() {
             document.getElementById("p1").innerHTML =
                 "Acesta este paragraful 1";
-            document.getElementById("p1").style.color = "red";
-            document.getElementById("p1").style.backgroundColor = "yellow";
 
             document.getElementById("p2").innerHTML =
                 "Acesta este paragraful 2";
-            document.getElementById("p2").style.color = "blue";
-            document.getElementById("p2").style.backgroundColor = "lightgreen";
 
             document.getElementById("p3").innerHTML =
                 "Acesta este paragraful 3";
-            document.getElementById("p3").style.color = "white";
-            document.getElementById("p3").style.backgroundColor = "purple";
+
+            document.getElementById("p1").style.color = "red";
+            document.getElementById("p1").style.backgroundColor = "pink";
+
+            document.getElementById("p2").style.color = "blue";
+            document.getElementById("p2").style.backgroundColor = "lightblue";
+
+            document.getElementById("p3").style.color = "green";
+            document.getElementById("p3").style.backgroundColor = "lightgreen";
         }
     </script>
 </head>
 <body>
-    <h1>Modificarea celor trei paragrafe</h1>
+    <h1>Trei paragrafe</h1>
 
-    <p id="p1">Paragraful initial 1</p>
-    <p id="p2">Paragraful initial 2</p>
-    <p id="p3">Paragraful initial 3</p>
+    <p id="p1">Primul paragraf inițial</p>
+    <p id="p2">Al doilea paragraf inițial</p>
+    <p id="p3">Al treilea paragraf inițial</p>
 
     <button onclick="modificaParagrafe()">
-        Modifica paragrafele
+        Modifică paragrafele
     </button>
 
-    <p><a href="index.html">Înapoi la temă</a></p>
+    <p><a href="index.html">Înapoi la exerciții</a></p>
 </body>
 </html>
+
 

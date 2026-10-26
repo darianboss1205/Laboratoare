@@ -1,1 +1,20 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Click pe buton cu functie</title>
 
+    <script>
+        function schimba() {
+            var p = document.getElementById("mesaj");
+            p.innerHTML = "Textul si culoarea s-au schimbat!";
+            p.style.color = "blue";
+            p.style.backgroundColor = "yellow";
+        }
+    </script>
+</head>
+<body>
+    <p id="mesaj">Text initial</p>
+    <button onclick="schimba()">Schimba textul</button>
+</body>
+</html>

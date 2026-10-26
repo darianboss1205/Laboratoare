@@ -1,17 +1,23 @@
 
+
 <!DOCTYPE html>
-<html lang="ro">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>JS 1 - Alerte si clicuri</title>
+    <title>Mesaj in alerta - pop-up</title>
     <script>
-        window.alert("Pagina se incarca.");
+        window.alert("This is not my sandwich");
     </script>
+    <style>
+        body {
+            background-color: yellow;
+        }
+    </style>
 </head>
-<body onclick="window.alert('Ai dat clic pe pagina!');">
-    <h1>Primul exemplu JavaScript</h1>
-    <p>Apasa oriunde pe pagina pentru a afisa o alerta.</p>
-    <p><a href="index.html">Înapoi la laborator</a></p>
+<body onclick="alert('This is the body');">
+    <p>
+        Paragraful se incarca dupa mesaj
+        <br><br><br><br><br><br>
+        La click pe body apare alta alerta.
+    </p>
 </body>
 </html>
-

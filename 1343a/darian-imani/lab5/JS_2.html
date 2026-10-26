@@ -1,1 +1,29 @@
 
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>JS 2 - Modificarea stilului</title>
+</head>
+<body>
+    <h1>Modificarea unui paragraf</h1>
+
+    <p id="demo">Acesta este un paragraf de test.</p>
+
+    <button onclick="
+        var p = document.getElementById('demo');
+        if (p.style.backgroundColor === 'yellow') {
+            p.style.backgroundColor = 'lightblue';
+            p.innerHTML = 'Textul s-a schimbat din nou!';
+        } else {
+            p.style.backgroundColor = 'yellow';
+            p.innerHTML = 'Ai apasat butonul!';
+        }
+    ">
+        Schimba paragraful
+    </button>
+
+    <p><a href="index.html">Înapoi la laborator</a></p>
+</body>
+</html>
+

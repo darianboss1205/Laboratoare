@@ -1,13 +1,20 @@
 
+
 <!DOCTYPE html>
-<html lang="ro">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Click pe paragraf</title>
+    <title>Exemplu modificare paragraf</title>
 </head>
 <body>
-    <p onclick="this.innerHTML='Ai dat clic pe paragraf!';">
-        Apasa pe acest paragraf.
+    <h1>Modificari paragraf la click</h1>
+
+    <p
+        style="background-color:yellow"
+        onclick="this.style.color = 'blue';
+                 this.style.fontSize = '25px';
+                 this.style.backgroundColor = 'red';
+                 this.innerHTML = 'Modificari efectuate'">
+        Dati click pe paragraf pentru a efectua modificari
     </p>
 </body>
 </html>

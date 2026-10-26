@@ -1,27 +1,47 @@
 
+
 <!DOCTYPE html>
-<html lang="ro">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>JS 3 - Ordinea executarii</title>
+    <title>Mesaj in alerta - pop-up</title>
+    <script>
+        window.alert("Mesaj inainte de incarcare body");
+    </script>
+    <style>
+        body {
+            background-color: yellow;
+        }
+    </style>
 </head>
 <body>
-    <h1>Ordinea executarii JavaScript</h1>
-
     <script>
-        window.alert("Prima alerta: incepe incarcarea paginii.");
-
-        var a = 35;
-        var b = 6;
-        var c = 5;
-
-        console.log("Rezultatul este: " + (a + c) + b);
-        console.log("35 + 5 = " + (a + c));
-        console.log("35 + 5, apoi concatenare cu 6: " + ((a + c) + "" + b));
+        window.alert("Incarcare titlu");
     </script>
 
-    <p>Deschide consola cu F12 si selecteaza Console.</p>
-    <p><a href="index.html">Înapoi la laborator</a></p>
+    <h1>Scriere la consola - debugging</h1>
+
+    <script>
+        window.alert("Incarcare paragraf");
+    </script>
+
+    <p>
+        a = 5;<br>
+        b = 6;<br>
+        c = a + b*a;<br>
+        console.log(c+a+""+b);<br>
+    </p>
+
+    <script>
+        window.alert("La consola va aparea rezultatul din paragraf");
+    </script>
+
+    <script>
+        a = 5;
+        b = 6;
+        c = a + b*a;
+        console.log(c+a+""+b);
+    </script>
 </body>
 </html>
+
 

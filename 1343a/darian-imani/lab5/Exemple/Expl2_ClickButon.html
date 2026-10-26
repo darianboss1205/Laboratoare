@@ -1,16 +1,28 @@
 
+
 <!DOCTYPE html>
-<html lang="ro">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Click pe buton</title>
+    <title>Modificari cu JavaScript in tag</title>
 </head>
 <body>
-    <p id="mesaj">Text initial</p>
+    <h1>Modificari paragraf la click pe buton</h1>
 
-    <button onclick="document.getElementById('mesaj').innerHTML='Text modificat!';">
-        Apasa aici
+    <p id="demo">Paragraf de modificat</p>
+
+    <button
+        id="butt"
+        type="button"
+        onclick="
+            var x = document.getElementById('demo');
+            x.style.fontSize = '35px';
+            x.style.color = 'blue';
+            x.style.backgroundColor = 'yellow';
+            x.innerHTML = 'Paragraf modificat!';
+        ">
+        Apasa-ma!
     </button>
 </body>
 </html>
+
 

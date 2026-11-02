@@ -1,1 +1,61 @@
 
+
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercitiul 3</title>
+
+    <style>
+        #par1 {
+            color: blue;
+            background-color: lightblue;
+            padding: 10px;
+        }
+
+        #par2 {
+            color: green;
+            background-color: lightgreen;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Schimbarea paragrafelor</h1>
+
+<button id="buton">Schimba textele</button>
+
+<p id="par1">Acesta este primul paragraf.</p>
+
+<p id="par2">Acesta este al doilea paragraf.</p>
+
+<script>
+    var p1 = document.getElementById("par1");
+    var p2 = document.getElementById("par2");
+
+    p1.onclick = function () {
+        var text = prompt("Introdu textul nou:", this.textContent);
+
+        if (text !== null && text !== "") {
+            this.textContent = text;
+        }
+    };
+
+    p2.onclick = function () {
+        var text = prompt("Introdu textul nou:", this.textContent);
+
+        if (text !== null && text !== "") {
+            this.textContent = text;
+        }
+    };
+
+    document.getElementById("buton").onclick = function () {
+        var temporar = p1.textContent;
+        p1.textContent = p2.textContent;
+        p2.textContent = temporar;
+    };
+</script>
+
+</body>
+</html>

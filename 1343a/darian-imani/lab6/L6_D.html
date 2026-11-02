@@ -1,1 +1,52 @@
 
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Galerie de imagini</title>
+</head>
+<body>
+    <h1>Galerie de imagini</h1>
+
+    <img id="imagine" src="Img/pisici.jpg"
+         alt="Imagine din galerie" width="400">
+
+    <p id="indicator">Imaginea 1 din 4</p>
+
+    <button id="inapoi">Inapoi</button>
+    <button id="inainte">Inainte</button>
+
+    <script>
+        var imagini = [
+            "Img/pisici.jpg",
+            "Img/caini.jpg",
+            "Img/munti.jpg",
+            "Img/mare.jpg"
+        ];
+
+        var pozitie = 0;
+
+        var imagine = document.getElementById("imagine");
+        var indicator = document.getElementById("indicator");
+        var butonInapoi = document.getElementById("inapoi");
+        var butonInainte = document.getElementById("inainte");
+
+        function actualizeazaImaginea() {
+            imagine.src = imagini[pozitie];
+            indicator.textContent =
+                "Imaginea " + (pozitie + 1) + " din " + imagini.length;
+        }
+
+        butonInainte.onclick = function() {
+            pozitie = (pozitie + 1) % imagini.length;
+            actualizeazaImaginea();
+        };
+
+        butonInapoi.onclick = function() {
+            pozitie = (pozitie - 1 + imagini.length) % imagini.length;
+            actualizeazaImaginea();
+        };
+    </script>
+</body>
+</html>
+

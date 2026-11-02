@@ -1,1 +1,50 @@
 
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercitiul 4</title>
+</head>
+<body>
+
+<h1 id="titlu">JavaScript si culorile</h1>
+
+<p id="paragraf">
+    Acesta este primul rand.<br>
+    Acesta este al doilea rand.<br>
+    Acesta este al treilea rand.
+</p>
+
+<script>
+    document.getElementById("titlu").onclick = function () {
+        var c = prompt("Introdu culoarea textului titlului:");
+
+        if (c === null || c.trim() === "") {
+            return;
+        }
+
+        if (CSS.supports("color", c.trim())) {
+            this.style.color = c.trim();
+        } else {
+            alert("Culoarea introdusa nu este valida!");
+        }
+    };
+
+    document.getElementById("paragraf").onclick = function () {
+        var c = prompt("Introdu culoarea de fundal:");
+
+        if (c === null || c.trim() === "") {
+            return;
+        }
+
+        if (CSS.supports("background-color", c.trim())) {
+            this.style.backgroundColor = c.trim();
+        } else {
+            alert("Culoarea introdusa nu este valida!");
+        }
+    };
+</script>
+
+</body>
+</html>
+

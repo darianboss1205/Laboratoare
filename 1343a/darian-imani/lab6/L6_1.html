@@ -1,16 +1,26 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Exercitiul 2</title>
+</head>
 <body>
 
-<p id="intro">Salutare, <br /> oameni buni! <br /> (Text de modificat cu js!)</p>
+<p id="intro">Salutare, <br> oameni buni! <br> (Text de modificat cu js!)</p>
 
-<p>Folositi metoda <b>getElementById</b> pentru a modifica textele paragrafelor alaturate !</p>
+<p>Folositi metoda <b>getElementById</b> pentru a modifica textele paragrafelor alaturate!</p>
 
 <p id="demo">Acest text va fi modificat prin JavaScript</p>
 
 <script>
-// Utilizati getElementById() !
+    document.getElementById("intro").innerHTML =
+        "Bine ati venit,<br>studenti MIAI!";
+
+    document.getElementById("demo").textContent =
+        "Acest text a fost modificat prin JavaScript.";
 </script>
 
 </body>
 </html>
+

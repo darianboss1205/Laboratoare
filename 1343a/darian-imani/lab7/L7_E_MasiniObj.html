@@ -1,10 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
     <title>Masini - folosirea obiectelor</title>
-
     <script>
         // Masina JavaScript
         function loadMjs() {
@@ -24,12 +22,12 @@
                 "</ul>";
         }
 
-        // Functie generala de afisare
+        // Functie generala pentru afisarea unei masini din storage
         function afiseaza(storage, id) {
-            var text = storage.getItem("masina");
+            var textMasina = storage.getItem("masina");
 
-            if (text) {
-                var masina = JSON.parse(text);
+            if (textMasina !== null) {
+                var masina = JSON.parse(textMasina);
 
                 document.getElementById(id).innerHTML =
                     "<ul>" +
@@ -39,12 +37,10 @@
                     "<li>An fabricatie: " + masina.anFab + "</li>" +
                     "</ul>";
             } else {
-                document.getElementById(id).innerHTML =
-                    "Nicio masina salvata";
+                document.getElementById(id).textContent = "Nicio masina salvata";
             }
         }
 
-        // Salvare masina Local Storage
         function salveazaMls() {
             var masina = {
                 tip: document.getElementById("tipL").value,
@@ -54,18 +50,14 @@
             };
 
             localStorage.setItem("masina", JSON.stringify(masina));
-
             afiseaza(localStorage, "mls");
-
             return false;
         }
 
-        // Incarcare masina Local Storage
         function loadMls() {
             afiseaza(localStorage, "mls");
         }
 
-        // Salvare masina Session Storage
         function salveazaMss() {
             var masina = {
                 tip: document.getElementById("tipS").value,
@@ -75,24 +67,19 @@
             };
 
             sessionStorage.setItem("masina", JSON.stringify(masina));
-
             afiseaza(sessionStorage, "mss");
-
             return false;
         }
 
-        // Incarcare masina Session Storage
         function loadMss() {
             afiseaza(sessionStorage, "mss");
         }
 
-        // Stergere masina
         function sterge(storage, id) {
             storage.removeItem("masina");
             afiseaza(storage, id);
         }
 
-        // Initializare pagina
         function initializare() {
             loadMjs();
             loadMls();
@@ -100,9 +87,7 @@
         }
     </script>
 </head>
-
 <body onload="initializare()">
-
     <div style="background-color:LimeGreen;color:white;font-size:150%;padding:15px">
         <p>Masina JavaScript</p>
         <div id="mjs"></div>
@@ -110,49 +95,36 @@
 
     <div style="background-color:ForestGreen;color:white;font-size:150%;padding:15px">
         <p>Masina Local Storage</p>
-
         <form onsubmit="return salveazaMls()">
             <label for="tipL">Tip:</label>
             <input type="text" id="tipL" required>
-
             <label for="modelL">Model:</label>
             <input type="text" id="modelL" required>
-
             <label for="culoareL">Culoare:</label>
             <input type="text" id="culoareL" required>
-
             <label for="anL">An fabricatie:</label>
-            <input type="number" id="anL" required>
-
+            <input type="number" id="anL" min="1886" required>
             <button type="submit">Salveaza</button>
             <button type="button" onclick="sterge(localStorage, 'mls')">Sterge</button>
         </form>
-
         <div id="mls"></div>
     </div>
 
     <div style="background-color:SeaGreen;color:white;font-size:150%;padding:15px">
         <p>Masina Session Storage</p>
-
         <form onsubmit="return salveazaMss()">
             <label for="tipS">Tip:</label>
             <input type="text" id="tipS" required>
-
             <label for="modelS">Model:</label>
             <input type="text" id="modelS" required>
-
             <label for="culoareS">Culoare:</label>
             <input type="text" id="culoareS" required>
-
             <label for="anS">An fabricatie:</label>
-            <input type="number" id="anS" required>
-
+            <input type="number" id="anS" min="1886" required>
             <button type="submit">Salveaza</button>
             <button type="button" onclick="sterge(sessionStorage, 'mss')">Sterge</button>
         </form>
-
         <div id="mss"></div>
     </div>
-
 </body>
 </html>

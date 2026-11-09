@@ -1,10 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
     <title>Masini - abordare bruta</title>
-
     <script>
         // Masina JavaScript
         function loadMjs() {
@@ -22,40 +20,28 @@
             var model = localStorage.getItem("model");
             var culoare = localStorage.getItem("culoare");
 
-            if (tip && model && culoare) {
+            if (tip !== null && model !== null && culoare !== null) {
                 document.getElementById("mls").innerHTML =
-                    "<ul>" +
-                    "<li>Tip: " + tip + "</li>" +
-                    "<li>Model: " + model + "</li>" +
-                    "<li>Culoare: " + culoare + "</li>" +
-                    "</ul>";
+                    "<ul><li>Tip: " + tip +
+                    "</li><li>Model: " + model +
+                    "</li><li>Culoare: " + culoare + "</li></ul>";
             } else {
-                document.getElementById("mls").innerHTML =
-                    "Nicio masina salvata";
+                document.getElementById("mls").textContent = "Nicio masina salvata";
             }
         }
 
-        // Salvare masina Local Storage
         function salveazaMls() {
-            var tip = document.getElementById("tipL").value;
-            var model = document.getElementById("modelL").value;
-            var culoare = document.getElementById("culoareL").value;
-
-            localStorage.setItem("tip", tip);
-            localStorage.setItem("model", model);
-            localStorage.setItem("culoare", culoare);
-
+            localStorage.setItem("tip", document.getElementById("tipL").value);
+            localStorage.setItem("model", document.getElementById("modelL").value);
+            localStorage.setItem("culoare", document.getElementById("culoareL").value);
             loadMls();
-
             return false;
         }
 
-        // Stergere masina Local Storage
         function stergeMls() {
             localStorage.removeItem("tip");
             localStorage.removeItem("model");
             localStorage.removeItem("culoare");
-
             loadMls();
         }
 
@@ -65,44 +51,31 @@
             var model = sessionStorage.getItem("model");
             var culoare = sessionStorage.getItem("culoare");
 
-            if (tip && model && culoare) {
+            if (tip !== null && model !== null && culoare !== null) {
                 document.getElementById("mss").innerHTML =
-                    "<ul>" +
-                    "<li>Tip: " + tip + "</li>" +
-                    "<li>Model: " + model + "</li>" +
-                    "<li>Culoare: " + culoare + "</li>" +
-                    "</ul>";
+                    "<ul><li>Tip: " + tip +
+                    "</li><li>Model: " + model +
+                    "</li><li>Culoare: " + culoare + "</li></ul>";
             } else {
-                document.getElementById("mss").innerHTML =
-                    "Nicio masina salvata";
+                document.getElementById("mss").textContent = "Nicio masina salvata";
             }
         }
 
-        // Salvare masina Session Storage
         function salveazaMss() {
-            var tip = document.getElementById("tipS").value;
-            var model = document.getElementById("modelS").value;
-            var culoare = document.getElementById("culoareS").value;
-
-            sessionStorage.setItem("tip", tip);
-            sessionStorage.setItem("model", model);
-            sessionStorage.setItem("culoare", culoare);
-
+            sessionStorage.setItem("tip", document.getElementById("tipS").value);
+            sessionStorage.setItem("model", document.getElementById("modelS").value);
+            sessionStorage.setItem("culoare", document.getElementById("culoareS").value);
             loadMss();
-
             return false;
         }
 
-        // Stergere masina Session Storage
         function stergeMss() {
             sessionStorage.removeItem("tip");
             sessionStorage.removeItem("model");
             sessionStorage.removeItem("culoare");
-
             loadMss();
         }
 
-        // Afisare la deschiderea paginii
         function initializare() {
             loadMjs();
             loadMls();
@@ -110,53 +83,40 @@
         }
     </script>
 </head>
-
 <body onload="initializare()">
-
-    <div style="background-color:LimeGreen;color:white;font-size:200%">
+    <div style="background-color:LimeGreen;color:white;font-size:150%;padding:15px">
         <p>Masina JavaScript</p>
         <div id="mjs"></div>
     </div>
 
     <div style="background-color:ForestGreen;color:white;font-size:150%;padding:15px">
         <p>Masina Local Storage</p>
-
         <form onsubmit="return salveazaMls()">
             <label for="tipL">Tip:</label>
             <input type="text" id="tipL" required>
-
             <label for="modelL">Model:</label>
             <input type="text" id="modelL" required>
-
             <label for="culoareL">Culoare:</label>
             <input type="text" id="culoareL" required>
-
             <button type="submit">Salveaza</button>
             <button type="button" onclick="stergeMls()">Sterge</button>
         </form>
-
         <div id="mls"></div>
     </div>
 
     <div style="background-color:SeaGreen;color:white;font-size:150%;padding:15px">
         <p>Masina Session Storage</p>
-
         <form onsubmit="return salveazaMss()">
             <label for="tipS">Tip:</label>
             <input type="text" id="tipS" required>
-
             <label for="modelS">Model:</label>
             <input type="text" id="modelS" required>
-
             <label for="culoareS">Culoare:</label>
             <input type="text" id="culoareS" required>
-
             <button type="submit">Salveaza</button>
             <button type="button" onclick="stergeMss()">Sterge</button>
         </form>
-
         <div id="mss"></div>
     </div>
-
 </body>
 </html>

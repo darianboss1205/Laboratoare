@@ -1,46 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
-<title> Verificare user pass encrypt </title>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
-<script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
-<script>
-function verificaUser() {
-var u = document.getElementById("user").value;
-if(!localStorage.getItem(u)) {
-alert("User incorect!")
-}
-else {
-var p = document.getElementById("pass").value;
-if(CryptoJS.MD5(p) == localStorage.getItem(u))
-confirm("OK");
-else
-alert("parola incorecta");
-}
-}
+    <meta charset="UTF-8">
+    <title>Verificare user - parola hash</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+    <script>
+        function verificaUser() {
+            var u = document.getElementById("user").value;
+            var hashSalvat = localStorage.getItem(u);
 
-function inscrieUser() {
-var un = document.getElementById("user").value;
-if(localStorage.getItem(un)) {
-alert("User existent!")
-}
-else {
-var pn = document.getElementById("pass").value;
-var hash = CryptoJS.MD5(pn);
-localStorage.setItem(un, hash);
-confirm("User inscris!");
-}
-}
-</script>
+            if (!hashSalvat) {
+                alert("User incorect!");
+            } else {
+                var p = document.getElementById("pass").value;
+                var hashIntrodus = CryptoJS.MD5(p).toString();
+
+                if (hashIntrodus === hashSalvat) {
+                    alert("OK");
+                } else {
+                    alert("Parola incorecta.");
+                }
+            }
+        }
+
+        function inscrieUser() {
+            var un = document.getElementById("user").value;
+            var pn = document.getElementById("pass").value;
+
+            if (!un || !pn) {
+                alert("Completati userul si parola.");
+                return;
+            }
+
+            if (localStorage.getItem(un)) {
+                alert("User existent!");
+            } else {
+                var hash = CryptoJS.MD5(pn).toString();
+                localStorage.setItem(un, hash);
+                alert("User inscris!");
+            }
+        }
+    </script>
 </head>
 <body>
-<form >
-  <label for="user">User:</label><br>
-  <input type="text" id="user"><br>
-  <label for="pass">Parola:</label><br>
-  <input type="password" id="pass"><br><br>
-  <input type="button" value="Verificare" onclick="verificaUser()">
-  <input type="button" value="Inscriere" onclick="inscrieUser()">
-</form>
+    <form onsubmit="return false;">
+        <label for="user">User:</label><br>
+        <input type="text" id="user" required><br>
+        <label for="pass">Parola:</label><br>
+        <input type="password" id="pass" required><br><br>
+        <input type="button" value="Verificare" onclick="verificaUser()">
+        <input type="button" value="Inscriere" onclick="inscrieUser()">
+    </form>
 </body>
 </html>

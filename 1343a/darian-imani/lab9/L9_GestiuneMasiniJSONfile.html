@@ -3,68 +3,54 @@
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestiune mașini JSON</title>
+    <title>Gestiune mașini</title>
 
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 25px;
+            font-family: Arial;
+            margin: 30px;
         }
 
         table {
             border-collapse: collapse;
+            margin-top: 20px;
             width: 100%;
-            margin-top: 15px;
         }
 
         th, td {
             border: 1px solid black;
             padding: 8px;
-            text-align: left;
+            text-align: center;
         }
 
         th {
-            background-color: #ddd;
+            background-color: lightgray;
         }
 
-        input {
+        button {
             margin: 5px;
             padding: 7px;
         }
 
-        button {
-            padding: 7px 12px;
+        input {
+            padding: 7px;
             margin: 5px;
-            cursor: pointer;
-        }
-
-        #mesaj {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-        #raw {
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
         }
     </style>
 </head>
 
 <body>
 
-    <h1>Gestiune mașini</h1>
+    <h2>Gestiune mașini folosind JSON</h2>
 
-    <button onclick="getAJAX('Masini_JSON.txt')">
-        Încarcă array
-    </button>
+    <button onclick="getAJAX()">Încarcă array</button>
 
     <p id="mesaj"></p>
 
-    <h3>Conținutul fișierului JSON:</h3>
+    <h3>Conținut JSON:</h3>
     <pre id="raw"></pre>
 
-    <h2>Lista mașinilor</h2>
+    <h3>Lista mașinilor:</h3>
 
     <table>
         <thead>
@@ -79,98 +65,102 @@
         <tbody id="tabelMasini"></tbody>
     </table>
 
-    <h2>Adaugă / Modifică mașină</h2>
+    <h3>Adaugă / Modifică mașină</h3>
 
-    <form id="formular" onsubmit="salveazaMasina(event)">
+    <form onsubmit="salveazaMasina(event)">
         <input type="text" id="marca" placeholder="Marca" required>
         <input type="text" id="model" placeholder="Model" required>
         <input type="text" id="culoare" placeholder="Culoare" required>
 
-        <button type="submit">Salvează</button>
-        <button type="button" onclick="reseteazaFormular()">Anulează</button>
+        <button type="submit">Adaugă / Salvează</button>
+        <button type="button" onclick="reseteaza()">Anulează</button>
     </form>
 
     <script>
+
         let fileContent = "";
         let masini2Show = [];
         let indexEditare = -1;
 
-        // ÎNCĂRCARE ARRAY DIN FIȘIER
-        async function getAJAX(file) {
-            try {
-                const url = new URL(file, window.location.href);
-
-                document.getElementById("mesaj").textContent =
-                    "Se incearca incarcarea: " + url.href;
-
-                const response = await fetch(url);
-
-                if (!response.ok) {
-                    throw new Error("Eroare HTTP: " + response.status);
-                }
-
-                fileContent = await response.text();
-
-                document.getElementById("raw").textContent = fileContent;
-
-                masini2Show = JSON.parse(fileContent);
-
-                document.getElementById("mesaj").textContent =
-                    "Array incarcat cu succes!";
-
-                afiseazaTabel();
-
-            } catch (error) {
-                console.error(error);
-
-                document.getElementById("mesaj").textContent =
-                    "Eroare: " + error.message;
+        // Datele preluate din Masini_JSON.txt
+        const masiniJSON = `[
+            {
+                "marca": "Dacia",
+                "model": "Logan",
+                "culoare": "albastra"
+            },
+            {
+                "marca": "Nissan",
+                "model": "Quasqai",
+                "culoare": "verde"
+            },
+            {
+                "marca": "AlaBala",
+                "model": "PortoCala",
+                "culoare": "grena"
+            },
+            {
+                "marca": "Grand Jeep",
+                "model": "Cherokee",
+                "culoare": "negru"
             }
+        ]`;
+
+        // Încărcare array
+        function getAJAX() {
+
+            fileContent = masiniJSON;
+
+            document.getElementById("raw").textContent = fileContent;
+
+            masini2Show = JSON.parse(fileContent);
+
+            document.getElementById("mesaj").textContent =
+                "Array incarcat cu succes!";
+
+            afiseazaTabel();
         }
 
-        // AFIȘARE TABEL
+        // Afișare tabel
         function afiseazaTabel() {
-            const tabel = document.getElementById("tabelMasini");
+
+            let tabel = document.getElementById("tabelMasini");
+
             tabel.innerHTML = "";
 
             masini2Show.forEach((masina, index) => {
-                const rand = document.createElement("tr");
 
-                const valori = [
-                    masina.marca,
-                    masina.model,
-                    masina.culoare
-                ];
+                let rand = tabel.insertRow();
 
-                valori.forEach(valoare => {
-                    const celula = document.createElement("td");
-                    celula.textContent = valoare;
-                    rand.appendChild(celula);
-                });
+                rand.insertCell().textContent = masina.marca;
+                rand.insertCell().textContent = masina.model;
+                rand.insertCell().textContent = masina.culoare;
 
-                const actiuni = document.createElement("td");
+                let actiuni = rand.insertCell();
 
-                const butonModifica = document.createElement("button");
-                butonModifica.textContent = "Modifică";
-                butonModifica.onclick = () => modificaMasina(index);
+                let modifica = document.createElement("button");
+                modifica.textContent = "Modifică";
+                modifica.onclick = function() {
+                    modificaMasina(index);
+                };
 
-                const butonSterge = document.createElement("button");
-                butonSterge.textContent = "Șterge";
-                butonSterge.onclick = () => stergeMasina(index);
+                let sterge = document.createElement("button");
+                sterge.textContent = "Șterge";
+                sterge.onclick = function() {
+                    stergeMasina(index);
+                };
 
-                actiuni.appendChild(butonModifica);
-                actiuni.appendChild(butonSterge);
-
-                rand.appendChild(actiuni);
-                tabel.appendChild(rand);
+                actiuni.appendChild(modifica);
+                actiuni.appendChild(sterge);
             });
         }
 
-        // ADAUGARE SAU MODIFICARE
+        // Adăugare / salvare mașină
         function salveazaMasina(event) {
+
             event.preventDefault();
 
-            const masina = {
+            let masina = {
                 marca: document.getElementById("marca").value,
                 model: document.getElementById("model").value,
                 culoare: document.getElementById("culoare").value
@@ -182,14 +172,15 @@
                 masini2Show[indexEditare] = masina;
             }
 
-            reseteazaFormular();
-            salveazaLocal();
+            reseteaza();
+            actualizeazaJSON();
             afiseazaTabel();
         }
 
-        // MODIFICARE MAȘINĂ
+        // Modificare mașină
         function modificaMasina(index) {
-            const masina = masini2Show[index];
+
+            let masina = masini2Show[index];
 
             document.getElementById("marca").value = masina.marca;
             document.getElementById("model").value = masina.model;
@@ -198,30 +189,35 @@
             indexEditare = index;
         }
 
-        // ȘTERGERE MAȘINĂ
+        // Ștergere mașină
         function stergeMasina(index) {
-            if (confirm("Sigur dorești să ștergi această mașină?")) {
+
+            if (confirm("Dorești să ștergi această mașină?")) {
+
                 masini2Show.splice(index, 1);
-                salveazaLocal();
+
+                actualizeazaJSON();
                 afiseazaTabel();
             }
         }
 
-        // RESETARE FORMULAR
-        function reseteazaFormular() {
-            document.getElementById("formular").reset();
+        // Actualizare conținut JSON
+        function actualizeazaJSON() {
+
+            fileContent = JSON.stringify(masini2Show, null, 4);
+
+            document.getElementById("raw").textContent = fileContent;
+        }
+
+        // Resetare formular
+        function reseteaza() {
+
+            document.querySelector("form").reset();
+
             indexEditare = -1;
         }
 
-        // SALVARE LOCALĂ
-        function salveazaLocal() {
-            localStorage.setItem(
-                "masiniArray",
-                JSON.stringify(masini2Show)
-            );
-        }
     </script>
 
 </body>
 </html>
-

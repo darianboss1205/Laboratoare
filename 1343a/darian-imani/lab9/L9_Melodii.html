@@ -3,227 +3,230 @@
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <title>Gestiune melodii</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestiune melodii JSON</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 25px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #ddd;
+        }
+
+        input {
+            margin: 5px;
+            padding: 7px;
+        }
+
+        button {
+            padding: 7px 12px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        #mesaj {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        #raw {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>Gestiune melodii</h1>
+    <h1>Gestiune melodii</h1>
 
-<button onclick="getAJAX('Melodii_JSON.txt')">Incarca array</button>
-<button onclick="loadTable()">Incarca tabel</button>
-<button onclick="deschideAdaugare()">Adauga melodie</button>
+    <button onclick="getAJAX('Melodii_JSON.txt')">
+        Încarcă array
+    </button>
 
-<h2>Continut JSON</h2>
-<pre id="raw"></pre>
+    <p id="mesaj"></p>
 
-<p id="mesaj"></p>
+    <h3>Conținutul fișierului JSON:</h3>
+    <pre id="raw"></pre>
 
-<h2>Tabel melodii</h2>
+    <h2>Lista melodiilor</h2>
 
-<table border="1" id="tabel">
-    <thead>
-        <tr>
-            <th>Titlu</th>
-            <th>Muzica</th>
-            <th>Versuri</th>
-            <th>Interpretare</th>
-            <th>Actiuni</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+    <table>
+        <thead>
+            <tr>
+                <th>Titlu</th>
+                <th>Muzică</th>
+                <th>Versuri</th>
+                <th>Interpretare</th>
+                <th>Acțiuni</th>
+            </tr>
+        </thead>
 
-<div id="formular" style="display:none;">
-    <h2 id="titluFormular">Adauga melodie</h2>
+        <tbody id="tabelMelodii"></tbody>
+    </table>
 
-    <form id="formMelodie">
-        Titlu:
-        <input type="text" id="titlu" required>
-        <br><br>
+    <h2>Adaugă / Modifică melodie</h2>
 
-        Muzica:
-        <input type="text" id="muzica" required>
-        <br><br>
+    <form id="formular" onsubmit="salveazaMelodie(event)">
+        <input type="text" id="titlu" placeholder="Titlu" required>
+        <input type="text" id="muzica" placeholder="Muzică" required>
+        <input type="text" id="versuri" placeholder="Versuri" required>
+        <input type="text" id="interpretare" placeholder="Interpretare" required>
 
-        Versuri:
-        <input type="text" id="versuri" required>
-        <br><br>
-
-        Interpretare:
-        <input type="text" id="interpretare" required>
-        <br><br>
-
-        <button type="submit">Salveaza</button>
-        <button type="button" onclick="inchideFormular()">Anuleaza</button>
+        <button type="submit">Salvează</button>
+        <button type="button" onclick="reseteazaFormular()">Anulează</button>
     </form>
-</div>
 
-<script>
-let fileContent = "";
-let melodii2Show = [];
-let indexEditat = -1;
+    <script>
+        let fileContent = "";
+        let melodii2Show = [];
+        let indexEditare = -1;
 
-async function getAJAX(file) {
-    try {
-        const response = await fetch(file);
+        // ÎNCĂRCARE ARRAY DIN FIȘIER
+        async function getAJAX(file) {
+            try {
+                const url = new URL(file, window.location.href);
 
-        if (!response.ok) {
-            throw new Error("Fisierul nu a putut fi incarcat: " + response.status);
+                document.getElementById("mesaj").textContent =
+                    "Se incearca incarcarea: " + url.href;
+
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error("Eroare HTTP: " + response.status);
+                }
+
+                fileContent = await response.text();
+
+                document.getElementById("raw").textContent = fileContent;
+
+                melodii2Show = JSON.parse(fileContent);
+
+                document.getElementById("mesaj").textContent =
+                    "Array incarcat cu succes!";
+
+                afiseazaTabel();
+
+            } catch (error) {
+                console.error(error);
+
+                document.getElementById("mesaj").textContent =
+                    "Eroare: " + error.message;
+            }
         }
 
-        fileContent = await response.text();
+        // AFIȘARE TABEL
+        function afiseazaTabel() {
+            const tabel = document.getElementById("tabelMelodii");
+            tabel.innerHTML = "";
 
-        document.getElementById("raw").textContent = fileContent;
+            melodii2Show.forEach((melodie, index) => {
+                const rand = document.createElement("tr");
 
-        const melodiiDinFisier = JSON.parse(fileContent);
+                const valori = [
+                    melodie.titlu,
+                    melodie.muzica,
+                    melodie.versuri,
+                    melodie.interpretare
+                ];
 
-        const salvate = localStorage.getItem("songsArray");
+                valori.forEach(valoare => {
+                    const celula = document.createElement("td");
+                    celula.textContent = valoare;
+                    rand.appendChild(celula);
+                });
 
-        if (salvate) {
-            melodii2Show = JSON.parse(salvate);
-        } else {
-            melodii2Show = melodiiDinFisier;
+                const actiuni = document.createElement("td");
+
+                const butonModifica = document.createElement("button");
+                butonModifica.textContent = "Modifică";
+                butonModifica.onclick = () => modificaMelodie(index);
+
+                const butonSterge = document.createElement("button");
+                butonSterge.textContent = "Șterge";
+                butonSterge.onclick = () => stergeMelodie(index);
+
+                actiuni.appendChild(butonModifica);
+                actiuni.appendChild(butonSterge);
+
+                rand.appendChild(actiuni);
+                tabel.appendChild(rand);
+            });
         }
 
-        document.getElementById("mesaj").textContent =
-            "Array-ul a fost incarcat!";
+        // ADAUGARE SAU MODIFICARE
+        function salveazaMelodie(event) {
+            event.preventDefault();
 
-    } catch (error) {
-        console.error(error);
-        document.getElementById("mesaj").textContent =
-            "Eroare: " + error.message;
-    }
-}
+            const melodie = {
+                titlu: document.getElementById("titlu").value,
+                muzica: document.getElementById("muzica").value,
+                versuri: document.getElementById("versuri").value,
+                interpretare: document.getElementById("interpretare").value
+            };
 
-function loadTable() {
-    if (!fileContent && !localStorage.getItem("songsArray")) {
-        alert("Mai intai incarca array-ul!");
-        return;
-    }
+            if (indexEditare === -1) {
+                melodii2Show.push(melodie);
+            } else {
+                melodii2Show[indexEditare] = melodie;
+            }
 
-    try {
-        const salvate = localStorage.getItem("songsArray");
-
-        if (salvate) {
-            melodii2Show = JSON.parse(salvate);
-        } else {
-            melodii2Show = JSON.parse(fileContent);
+            reseteazaFormular();
+            salveazaLocal();
+            afiseazaTabel();
         }
 
-        afiseazaTabel();
+        // MODIFICARE MELODIE
+        function modificaMelodie(index) {
+            const melodie = melodii2Show[index];
 
-    } catch (error) {
-        alert("Eroare la citirea JSON: " + error.message);
-    }
-}
+            document.getElementById("titlu").value = melodie.titlu;
+            document.getElementById("muzica").value = melodie.muzica;
+            document.getElementById("versuri").value = melodie.versuri;
+            document.getElementById("interpretare").value =
+                melodie.interpretare;
 
-function afiseazaTabel() {
-    const tbody = document.querySelector("#tabel tbody");
+            indexEditare = index;
+        }
 
-    tbody.innerHTML = "";
+        // ȘTERGERE MELODIE
+        function stergeMelodie(index) {
+            if (confirm("Sigur dorești să ștergi această melodie?")) {
+                melodii2Show.splice(index, 1);
+                salveazaLocal();
+                afiseazaTabel();
+            }
+        }
 
-    melodii2Show.forEach((melodie, index) => {
+        // RESETARE FORMULAR
+        function reseteazaFormular() {
+            document.getElementById("formular").reset();
+            indexEditare = -1;
+        }
 
-        const rand = document.createElement("tr");
-
-        rand.innerHTML = `
-            <td>${melodie.titlu}</td>
-            <td>${melodie.muzica}</td>
-            <td>${melodie.versuri}</td>
-            <td>${melodie.interpretare}</td>
-        `;
-
-        const celulaActiuni = document.createElement("td");
-
-        const btnModifica = document.createElement("button");
-        btnModifica.textContent = "Modifica";
-        btnModifica.onclick = () => deschideModificare(index);
-
-        const btnSterge = document.createElement("button");
-        btnSterge.textContent = "Sterge";
-        btnSterge.onclick = () => stergeMelodie(index);
-
-        celulaActiuni.appendChild(btnModifica);
-        celulaActiuni.appendChild(btnSterge);
-
-        rand.appendChild(celulaActiuni);
-        tbody.appendChild(rand);
-    });
-}
-
-function deschideAdaugare() {
-    indexEditat = -1;
-
-    document.getElementById("titluFormular").textContent =
-        "Adauga melodie";
-
-    document.getElementById("formMelodie").reset();
-
-    document.getElementById("formular").style.display = "block";
-}
-
-function deschideModificare(index) {
-    indexEditat = index;
-
-    const melodie = melodii2Show[index];
-
-    document.getElementById("titlu").value = melodie.titlu;
-    document.getElementById("muzica").value = melodie.muzica;
-    document.getElementById("versuri").value = melodie.versuri;
-    document.getElementById("interpretare").value = melodie.interpretare;
-
-    document.getElementById("titluFormular").textContent =
-        "Modifica melodie";
-
-    document.getElementById("formular").style.display = "block";
-}
-
-document.getElementById("formMelodie").addEventListener("submit", function(event) {
-
-    event.preventDefault();
-
-    const melodieNoua = {
-        titlu: document.getElementById("titlu").value,
-        muzica: document.getElementById("muzica").value,
-        versuri: document.getElementById("versuri").value,
-        interpretare: document.getElementById("interpretare").value
-    };
-
-    if (indexEditat === -1) {
-        melodii2Show.push(melodieNoua);
-    } else {
-        melodii2Show[indexEditat] = melodieNoua;
-    }
-
-    salveazaDate();
-    afiseazaTabel();
-    inchideFormular();
-});
-
-function stergeMelodie(index) {
-    if (confirm("Sigur doresti sa stergi melodia?")) {
-
-        melodii2Show.splice(index, 1);
-
-        salveazaDate();
-        afiseazaTabel();
-    }
-}
-
-function salveazaDate() {
-    localStorage.setItem(
-        "songsArray",
-        JSON.stringify(melodii2Show)
-    );
-}
-
-function inchideFormular() {
-    document.getElementById("formular").style.display = "none";
-    document.getElementById("formMelodie").reset();
-}
-
-</script>
+        // SALVARE LOCALĂ
+        function salveazaLocal() {
+            localStorage.setItem(
+                "songsArray",
+                JSON.stringify(melodii2Show)
+            );
+        }
+    </script>
 
 </body>
 </html>
-

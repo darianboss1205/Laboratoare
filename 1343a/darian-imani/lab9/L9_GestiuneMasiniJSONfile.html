@@ -1,387 +1,222 @@
 
+
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
-    <title>Tabel masini</title>
-
-    <style>
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        td, th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        .loginPopup {
-            position: relative;
-            text-align: center;
-            width: 100%;
-        }
-
-        .formPopup {
-            display: none;
-            position: fixed;
-            left: 45%;
-            top: 5%;
-            transform: translate(-50%, 5%);
-            border: 3px solid #999999;
-            z-index: 9;
-        }
-
-        .formContainer {
-            max-width: 400px;
-            padding: 20px;
-            background-color: #fff;
-        }
-
-        .formContainer input[type=text] {
-            width: 80%;
-            padding: 15px;
-            margin: 5px 0 20px 0;
-            border: none;
-            background: #eee;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title>Gestiune masini</title>
 </head>
-
 <body>
 
-<h1>Masini incarcate de pe server</h1>
+<h1>Gestiune masini</h1>
 
-<p>
+<button onclick="getAJAX('Masini_JSON.txt')">Incarca array</button>
+<button onclick="loadTable()">Incarca tabel</button>
+<button onclick="deschideAdaugare()">Adauga masina</button>
 
-    <button onclick="getAJAX('Masini_JSON.txt')">
-        Incarca array masini de pe server
-    </button>
+<h2>Continut JSON</h2>
+<pre id="raw"></pre>
 
-    <br><br><br>
+<p id="mesaj"></p>
 
-    <button onclick="loadTable()">
-        Incarca tabel masini
-    </button>
+<h2>Tabel masini</h2>
 
-    <br><br><br>
-
-    <button onclick="openFormA()">
-        Adauga masina
-    </button>
-
-    <table id="tm">
+<table border="1" id="tabel">
+    <thead>
         <tr>
             <th>Marca</th>
             <th>Model</th>
             <th>Culoare</th>
-            <th colspan="2" style="text-align:center">
-                Operatii
-            </th>
+            <th>Actiuni</th>
         </tr>
-    </table>
+    </thead>
+    <tbody></tbody>
+</table>
 
-</p>
+<div id="formular" style="display:none;">
+    <h2 id="titluFormular">Adauga masina</h2>
 
-<div>
-    <span id="raw"></span>
-</div>
+    <form id="formMasina">
+        Marca:
+        <input type="text" id="marca" required>
+        <br><br>
 
+        Model:
+        <input type="text" id="model" required>
+        <br><br>
 
-<!-- Formular adaugare -->
+        Culoare:
+        <input type="text" id="culoare" required>
+        <br><br>
 
-<div class="formPopup" id="adauga">
-
-    <form action="javascript:;"
-          onsubmit="adaugaMasina(this)"
-          class="formContainer">
-
-        <h2>Adauga masina</h2>
-
-        <label for="marca">
-            <strong>Marca</strong>
-        </label>
-
-        <input type="text" id="marca"
-               placeholder="Marca masinii"
-               name="marca" required>
-
-        <label for="model">
-            <strong>Model</strong>
-        </label>
-
-        <input type="text" id="model"
-               placeholder="Modelul masinii"
-               name="model" required>
-
-        <label for="culoare">
-            <strong>Culoare</strong>
-        </label>
-
-        <input type="text" id="culoare"
-               placeholder="Culoarea masinii"
-               name="culoare" required>
-
-        <button type="submit" class="btn">
-            Adauga
-        </button>
-
-        <button type="button" class="btn cancel"
-                onclick="closeForm('adauga')">
-            Close
-        </button>
-
+        <button type="submit">Salveaza</button>
+        <button type="button" onclick="inchideFormular()">Anuleaza</button>
     </form>
-
 </div>
-
-
-<!-- Formular modificare -->
-
-<div class="formPopup" id="modifica">
-
-    <form action="javascript:;"
-          onsubmit="modificaMasina()"
-          class="formContainer">
-
-        <h2>Modifica masina</h2>
-
-        <label for="marcaM">
-            <strong>Marca</strong>
-        </label>
-
-        <input type="text" id="marcaM"
-               placeholder="Marca masinii"
-               name="marcaM" required>
-
-        <label for="modelM">
-            <strong>Model</strong>
-        </label>
-
-        <input type="text" id="modelM"
-               placeholder="Modelul masinii"
-               name="modelM" required>
-
-        <label for="culoareM">
-            <strong>Culoare</strong>
-        </label>
-
-        <input type="text" id="culoareM"
-               placeholder="Culoarea masinii"
-               name="culoareM" required>
-
-        <button type="submit" class="btn">
-            Modifica
-        </button>
-
-        <button type="button" class="btn cancel"
-                onclick="closeForm('modifica')">
-            Close
-        </button>
-
-    </form>
-
-</div>
-
 
 <script>
-
-const masini2Show = [];
-
-let fileContent;
-let nr = 0;
-
-
-// Incarcare fisier de pe server
+let fileContent = "";
+let masini2Show = [];
+let indexEditat = -1;
 
 async function getAJAX(file) {
+    try {
+        const response = await fetch(file);
 
-    let myObject = await fetch(file);
+        if (!response.ok) {
+            throw new Error("Fisierul nu a putut fi incarcat: " + response.status);
+        }
 
-    fileContent = await myObject.text();
+        fileContent = await response.text();
 
+        document.getElementById("raw").textContent = fileContent;
+
+        const masiniDinFisier = JSON.parse(fileContent);
+
+        const salvate = localStorage.getItem("masiniArray");
+
+        if (salvate) {
+            masini2Show = JSON.parse(salvate);
+        } else {
+            masini2Show = masiniDinFisier;
+        }
+
+        document.getElementById("mesaj").textContent =
+            "Array-ul a fost incarcat!";
+
+    } catch (error) {
+        console.error(error);
+        document.getElementById("mesaj").textContent =
+            "Eroare: " + error.message;
+    }
 }
-
-
-// Incarcare tabel
 
 function loadTable() {
-
-    document.getElementById("raw").innerHTML = fileContent;
-
-    var masiniStored = JSON.parse(fileContent);
-
-    masini2Show.length = 0;
-
-    for (let i = 0; i < masiniStored.length; i++) {
-
-        masini2Show.push(masiniStored[i]);
-
+    if (!fileContent && !localStorage.getItem("masiniArray")) {
+        alert("Mai intai incarca array-ul!");
+        return;
     }
 
-    afiseazaTabel();
+    try {
+        const salvate = localStorage.getItem("masiniArray");
 
+        if (salvate) {
+            masini2Show = JSON.parse(salvate);
+        } else {
+            masini2Show = JSON.parse(fileContent);
+        }
+
+        afiseazaTabel();
+
+    } catch (error) {
+        alert("Eroare la citirea JSON: " + error.message);
+    }
 }
-
-
-// Afisare tabel
 
 function afiseazaTabel() {
+    const tbody = document.querySelector("#tabel tbody");
 
-    document.getElementById("tm").innerHTML =
-        "<tr>" +
-        "<th>Marca</th>" +
-        "<th>Model</th>" +
-        "<th>Culoare</th>" +
-        "<th colspan='2' style='text-align:center'>Operatii</th>" +
-        "</tr>";
+    tbody.innerHTML = "";
 
-    for (let i = 0; i < masini2Show.length; i++) {
+    masini2Show.forEach((masina, index) => {
 
-        let m = new masina(
-            masini2Show[i].marca,
-            masini2Show[i].model,
-            masini2Show[i].culoare
-        );
+        const rand = document.createElement("tr");
 
-        document.getElementById("tm").innerHTML +=
-            m.randNou() +
-            "<td><button onclick='openForm(" + i + ")'>Modificare</button></td>" +
-            "<td><button onclick='stergeMasina(" + i + ")'>Stergere</button></td>" +
-            "</tr>";
+        rand.innerHTML = `
+            <td>${masina.marca}</td>
+            <td>${masina.model}</td>
+            <td>${masina.culoare}</td>
+        `;
 
+        const celulaActiuni = document.createElement("td");
+
+        const btnModifica = document.createElement("button");
+        btnModifica.textContent = "Modifica";
+        btnModifica.onclick = () => deschideModificare(index);
+
+        const btnSterge = document.createElement("button");
+        btnSterge.textContent = "Sterge";
+        btnSterge.onclick = () => stergeMasina(index);
+
+        celulaActiuni.appendChild(btnModifica);
+        celulaActiuni.appendChild(btnSterge);
+
+        rand.appendChild(celulaActiuni);
+        tbody.appendChild(rand);
+    });
+}
+
+function deschideAdaugare() {
+    indexEditat = -1;
+
+    document.getElementById("titluFormular").textContent =
+        "Adauga masina";
+
+    document.getElementById("formMasina").reset();
+
+    document.getElementById("formular").style.display = "block";
+}
+
+function deschideModificare(index) {
+    indexEditat = index;
+
+    const masina = masini2Show[index];
+
+    document.getElementById("marca").value = masina.marca;
+    document.getElementById("model").value = masina.model;
+    document.getElementById("culoare").value = masina.culoare;
+
+    document.getElementById("titluFormular").textContent =
+        "Modifica masina";
+
+    document.getElementById("formular").style.display = "block";
+}
+
+document.getElementById("formMasina").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const masinaNoua = {
+        marca: document.getElementById("marca").value,
+        model: document.getElementById("model").value,
+        culoare: document.getElementById("culoare").value
+    };
+
+    if (indexEditat === -1) {
+        masini2Show.push(masinaNoua);
+    } else {
+        masini2Show[indexEditat] = masinaNoua;
     }
 
-}
-
-
-// Modificare masina
-
-function modificaMasina() {
-
-    var mMod = new masina(
-        marcaM.value,
-        modelM.value,
-        culoareM.value
-    );
-
-    masini2Show.splice(nr, 1, mMod);
-
-    var myJSON = JSON.stringify(masini2Show);
-
-    localStorage.setItem("carsArray", myJSON);
-
-    marcaM.value = null;
-    modelM.value = null;
-    culoareM.value = null;
-
-    closeForm("modifica");
-
+    salveazaDate();
     afiseazaTabel();
+    inchideFormular();
+});
 
-}
+function stergeMasina(index) {
+    if (confirm("Sigur doresti sa stergi masina?")) {
 
+        masini2Show.splice(index, 1);
 
-// Stergere masina
-
-function stergeMasina(nr) {
-
-    masini2Show.splice(nr, 1);
-
-    var myJSON = JSON.stringify(masini2Show);
-
-    localStorage.setItem("carsArray", myJSON);
-
-    afiseazaTabel();
-
-}
-
-
-// Constructor masina
-
-function masina(mk, md, cl) {
-
-    this.marca = mk;
-    this.model = md;
-    this.culoare = cl;
-
-    this.randNou = function() {
-
-        return "<tr><td>" + this.marca +
-            "</td><td>" + this.model +
-            "</td><td>" + this.culoare +
-            "</td>";
-
+        salveazaDate();
+        afiseazaTabel();
     }
-
 }
 
-
-// Adaugare masina
-
-function adaugaMasina(frm) {
-
-    var mNoua = new masina(
-        frm.marca.value,
-        frm.model.value,
-        frm.culoare.value
+function salveazaDate() {
+    localStorage.setItem(
+        "masiniArray",
+        JSON.stringify(masini2Show)
     );
-
-    masini2Show.push(mNoua);
-
-    var myJSON = JSON.stringify(masini2Show);
-
-    localStorage.setItem("carsArray", myJSON);
-
-    afiseazaTabel();
-
-    frm.reset();
-
-    closeForm("adauga");
-
 }
 
-
-// Deschidere formular adaugare
-
-function openFormA() {
-
-    document.getElementById("adauga").style.display = "block";
-
-}
-
-
-// Deschidere formular modificare
-
-function openForm(rand) {
-
-    let frm = document.getElementById("modifica");
-
-    frm.style.display = "block";
-
-    nr = rand;
-
-    marcaM.value = masini2Show[nr].marca;
-    modelM.value = masini2Show[nr].model;
-    culoareM.value = masini2Show[nr].culoare;
-
-}
-
-
-// Inchidere formular
-
-function closeForm(opt) {
-
-    document.getElementById(opt).style.display = "none";
-
+function inchideFormular() {
+    document.getElementById("formular").style.display = "none";
+    document.getElementById("formMasina").reset();
 }
 
 </script>
 
 </body>
 </html>
+
